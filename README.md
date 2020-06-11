@@ -1,2 +1,2 @@
-# csp-kr
-Contents Service Pattern
+# csp-kr-next
+Contents Service Pattern (Next)
