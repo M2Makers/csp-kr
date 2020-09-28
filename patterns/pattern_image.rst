@@ -1,6 +1,6 @@
 ﻿.. _pattern-image:
 
-이미지 서비스 패턴
+2장. 이미지 서비스 패턴
 ******************
 
 이 장에서는 수 십억장의 이미지를 손쉽게 일괄처리하는 패턴에 대해 설명한다. 
@@ -189,6 +189,8 @@
 이미지 URL을 변경하고 싶지 않다면 `URL 전처리 <https://ston.readthedocs.io/ko/latest/admin/adv_vhost.html#url>`_ 를 사용한다.
 
 
+
+.. _pattern-image-split-loading:
 
 이미지 분할/병렬로딩
 ====================================
