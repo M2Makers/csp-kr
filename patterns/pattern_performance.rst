@@ -69,3 +69,66 @@ TTL(Time To Live)을 0으로 설정하면 원본서버의 1트랜잭션 시간�
 
 
 
+.. _pattern-performance-proxy:
+
+프록시 서버
+====================================
+
+해결하고 싶은 문제
+------------------------------------
+사업장 외부에 존재하는 대용량 파일에 대한 접근이 특정 시간에 집중된다. 
+급격한 전송속도 저하로 업무에 차질이 발생한다.
+
+
+솔루션/패턴 설명
+------------------------------------
+사업장 내부에 존재하는 ``Local DNS`` 를 이용해 대용량 트래픽을 발생시키는 도메인을 ``M2`` 로 위임한다.
+
+.. figure:: img/dgm025.png
+   :align: center
+
+사업장 내부 클라이언트는 특정 도메인에 대하여 ``M2`` 로부터 대용량 파일을 다운로드 받는다.
+
+
+.. note::
+
+   위 그림에서는 ``bar.com`` 을 ``Local DNS`` 가 리졸빙 해주는 것처럼 표현됐지만 DNS forwarding으로 동작한다. 
+   DNS 구성/운영 및 포워딩은 이 문서의 범위를 벗어난다.
+
+
+
+구현
+------------------------------------
+-  서비스할 도메인의 가상호스트를 생성한다.
+-  모든 요청을 바이패스하도록 설정한다. ::
+   
+      # server.xml - <Server><VHostDefault><Options>
+      # vhosts.xml - <Vhosts><Vhost><Options>
+
+      <BypassPostRequest>ON</BypassPostRequest>
+      <BypassGetRequest>ON</BypassGetRequest>
+
+
+-  `access.log <https://ston.readthedocs.io/ko/latest/admin/log.html#access>`_ 를 분석해 용량순으로 캐싱대상을 찾는다. ::
+
+      # /svc/www.example.com/bypass.txt      
+      
+      /bigfile.exe, cache
+      /patch*.zip, cache
+
+
+
+장점/효과
+------------------------------------
+-  외부 네트워크 대역폭 증설없이 빠른 전송속도를 제공한다.
+
+
+주의점
+------------------------------------
+-  HTTPS 통신이라면 원본서버의 인증서를 설치하거나, 비공인/Self-Siegned 인증서 환경을 구성해야 한다.
+-  개인화된 파일을 캐싱해서는 안된다.
+
+
+기타
+------------------------------------
+접근 빈도보다는 용량 기준으로 캐싱대상을 산정하는 것을 권장한다.
